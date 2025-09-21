@@ -22,7 +22,7 @@ public class CartService : ICartService
     {
         Cart? cart = await _carts.GetAsync(id, ct);
         if (cart is null) return null;
-        var items = cart.Items.Select(i => new CartItemDto(i.ProductId, i.Name, i.Price, i.Quantity));
+        var items = cart.Items.Select(i => new CartItemDto(i.Id, i.Name, i.Price, i.Quantity, i.ImageUrl)).ToList();
         return new CartDto(cart.Id, items, cart.Total);
     }
 

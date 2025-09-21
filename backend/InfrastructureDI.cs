@@ -1,4 +1,5 @@
 
+using backend.Logging;
 using backend.Repositories.Implementations;
 using backend.Repositories.Interfaces;
 using backend.Services.Implementations;
@@ -8,13 +9,13 @@ namespace backend;
 
 public static class InfrastructureDI
 {
-    public static IServiceCollection AddInfrastructure(this IServiceCollection services)
+    public static IServiceCollection AddInfrastructure(this IServiceCollection services, IConfiguration Configuration)
     {
-        services.AddPersistence();
+        services.AddPersistence(Configuration);
         return services;
     }
 
-    private static IServiceCollection AddPersistence(this IServiceCollection services)
+    private static IServiceCollection AddPersistence(this IServiceCollection services, IConfiguration Configuration)
     {
 
         services.AddSingleton<ICatalogRepository, CatalogRepository>();
@@ -23,7 +24,8 @@ public static class InfrastructureDI
         services.AddScoped<ICatalogService, CatalogService>();
         services.AddScoped<ICartService, CartService>();
         services.AddScoped<IOrderService, OrderService>();
-
+        services.Configure<OrderLogOptions>(Configuration.GetSection("OrderLog"));
+        services.AddSingleton<IOrderLog, OrderLog>();
         return services;
     }
 }

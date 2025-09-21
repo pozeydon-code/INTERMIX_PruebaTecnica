@@ -4,7 +4,7 @@ using backend;
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
-builder.Services.AddPresentation().AddInfrastructure();
+builder.Services.AddPresentation().AddInfrastructure(builder.Configuration);
 
 builder.Services.AddCors(opt =>
 {

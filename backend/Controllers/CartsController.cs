@@ -18,8 +18,8 @@ public class CartsController : ControllerBase
     [HttpGet("{id:Guid}")]
     public async Task<IActionResult> Get(Guid id, CancellationToken ct)
     {
-        var c = await _service.GetCartAsync(id, ct);
-        return c is null ? NotFound() : Ok(c);
+        var cart = await _service.GetCartAsync(id, ct);
+        return cart is null ? NotFound() : Ok(cart);
     }
 
     [HttpPost("{id:Guid}/items")]
