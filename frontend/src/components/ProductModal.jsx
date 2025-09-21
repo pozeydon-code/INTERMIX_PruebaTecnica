@@ -26,10 +26,9 @@ const ProductModal = ({ product, getItemQuantity, addItem, closeModal }) => {
   if (!isModalOpen || !product) return null;
 
   const currentQuantity = getItemQuantity(product.id);
+
   const handleAddToCart = () => {
-    for (let i = 0; i < quantity; i++) {
-      addItem(product);
-    }
+    addItem(product, quantity);
     handleCloseModal();
   };
 

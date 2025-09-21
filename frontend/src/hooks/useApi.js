@@ -1,5 +1,5 @@
-import axiosClient from "../api/axiosClient";
 import { useState } from "react";
+import { request } from "../api/transport";
 
 export function useApi() {
   const [loading, setLoading] = useState(false);
@@ -9,14 +9,14 @@ export function useApi() {
     setLoading(true);
     setError(null);
     try {
-      const response = await axiosClient({
+      const response = request({
         method,
         url,
-        data: body,
-        params: { ...params },
+        body,
+        params,
       });
 
-      return response.data;
+      return response;
     } catch (error) {
       setError(error);
       return null;

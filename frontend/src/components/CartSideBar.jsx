@@ -13,6 +13,7 @@ const CartSideBar = ({
   removeFromCart,
   decreaseQuantity,
   increaseQuantity,
+  createOrder,
 }) => {
   const { isOpen, setIsOpen } = useDialogContext();
   const [isCheckoutOpen, setIsCheckoutOpen] = useState(false);
@@ -103,6 +104,7 @@ const CartSideBar = ({
         products={products}
         total={total()}
         clearCart={clearCart}
+        createOrder={createOrder}
       />
     </>
   );

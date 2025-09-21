@@ -29,7 +29,7 @@ const Header = ({ cart }) => {
         >
           <ButtonIcon outlined>
             <ShoppingCartIcon fontSize="small" />
-            <CartBadge badgeContent={cart.length} overlap="circular" />
+            <CartBadge badgeContent={cart?.items?.length} overlap="circular" />
           </ButtonIcon>
         </div>
       </div>

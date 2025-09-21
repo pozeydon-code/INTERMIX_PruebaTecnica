@@ -4,7 +4,14 @@ import CreditCardIcon from "@mui/icons-material/CreditCard";
 import { formatCurrency } from "../utils/formatCurrency";
 import { useState } from "react";
 
-const CheckoutModal = ({ isOpen, onClose, products, total, clearCart }) => {
+const CheckoutModal = ({
+  isOpen,
+  onClose,
+  products,
+  total,
+  clearCart,
+  createOrder,
+}) => {
   const [isProcessing, setIsProcessing] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
 
@@ -12,16 +19,13 @@ const CheckoutModal = ({ isOpen, onClose, products, total, clearCart }) => {
     e.preventDefault();
     setIsProcessing(true);
 
-    // Simular procesamiento de pago
-    await new Promise((resolve) => setTimeout(resolve, 2000));
-
+    await createOrder();
     setIsProcessing(false);
     setIsSuccess(true);
-
     // Limpiar carrito después de 2 segundos
     setTimeout(() => {
       clearCart();
-    }, 2000);
+    }, 3000);
   };
 
   if (isSuccess) {

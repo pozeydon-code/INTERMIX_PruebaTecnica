@@ -1,83 +1,85 @@
 import { useEffect, useState } from "react";
+import * as cartSvc from "../api/cartService";
+import * as orderSvc from "../api/orderService";
+import { useCallback } from "react";
+import CartSideBar from "../components/CartSideBar";
 
-export const useCart = () => {
-  const initialCart = () => {
-    const localStorageCart = localStorage.getItem("cart");
-    return localStorageCart ? JSON.parse(localStorageCart) : [];
-  };
+const MIN_ITEMS = 1;
+const MAX_ITEMS = 5;
 
-  const [cart, setCart] = useState(initialCart);
+const useCart = () => {
+  const [cart, setCart] = useState({ id: null, items: [], total: 0 });
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
 
-  const MIN_ITEMS = 1;
-  const MAX_ITEMS = 5;
+  const refresh = useCallback(async () => {
+    try {
+      setLoading(true);
+      setError(null);
+      const c = await cartSvc.fetchCart();
+      setCart(c);
+    } catch (e) {
+      setError(e);
+    } finally {
+      setLoading(false);
+    }
+  }, []);
 
   useEffect(() => {
-    localStorage.setItem("cart", JSON.stringify(cart));
-  }, [cart]);
+    refresh();
+  }, [refresh]);
 
-  const addToCart = (product) => {
-    setCart((prev) => {
-      const existingItem = prev.find((item) => item.id === product.id);
-      if (existingItem) {
-        return prev.map((item) =>
-          item.id === product.id
-            ? {
-                ...item,
-                quantity: item.quantity >= MAX_ITEMS ? 5 : item.quantity + 1,
-              }
-            : item,
-        );
-      }
-      return [...prev, { ...product, quantity: 1 }];
-    });
+  const addToCart = async (product, quantity = 1) => {
+    await cartSvc.addItem(product.id ?? product.id, quantity);
+    await refresh();
   };
 
-  const removeFromCart = (id) => {
-    setCart((prevCart) => prevCart.filter((item) => item.id !== id));
+  const removeFromCart = async (id) => {
+    await cartSvc.removeItem(id);
+    await refresh();
   };
 
-  const decreaseQuantity = (id) => {
-    const updatedCart = cart.map((item) => {
-      if (item.id === id && item.quantity > MIN_ITEMS)
-        return {
-          ...item,
-          quantity: item.quantity - 1,
-        };
-      return item;
-    });
-
-    setCart(updatedCart);
+  const decreaseQuantity = async (id) => {
+    const it = cart.items.find((i) => i.id === id);
+    if (!it) return;
+    const newQty = Math.max(MIN_ITEMS, it.quantity - 1);
+    await cartSvc.updateQty(id, newQty);
+    await refresh();
   };
 
-  const increaseQuantity = (id) => {
-    const updatedCart = cart.map((item) => {
-      if (item.id === id && item.quantity <= MAX_ITEMS)
-        return {
-          ...item,
-          quantity: item.quantity + 1,
-        };
-      return item;
-    });
-
-    setCart(updatedCart);
+  const increaseQuantity = async (id) => {
+    const it = cart.items.find((i) => i.id === id);
+    console.log(it);
+    if (!it) return;
+    const newQty = Math.min(MAX_ITEMS, it.quantity + 1);
+    console.log(newQty);
+    await cartSvc.updateQty(id, newQty);
+    await refresh();
   };
 
-  const getItemQuantity = (id) => {
-    const finded = cart.find((item) => item.id === id);
-    return finded ? finded.quantity : 0;
+  const getItemQuantity = (id) =>
+    cart.items.find((i) => i.id === id)?.quantity ?? 0;
+
+  const clearCart = async () => {
+    await cartSvc.clearCart();
+    await refresh();
   };
 
-  const clearCart = () => {
-    setCart([]);
+  const createOrder = async () => {
+    await orderSvc.createOrder();
   };
 
   return {
     cart,
+    loading,
+    error,
     addToCart,
     removeFromCart,
     decreaseQuantity,
     increaseQuantity,
     getItemQuantity,
     clearCart,
+    createOrder,
   };
 };
+export default useCart;

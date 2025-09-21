@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { mockGetProducts } from "../api/apiClient";
+import { getProducts } from "../api/catalogService";
 
 export const useCatalog = () => {
   const [products, setProducts] = useState([]);
@@ -7,11 +7,11 @@ export const useCatalog = () => {
   const [error, setError] = useState(null);
 
   useEffect(() => {
-    const getProducts = async () => {
+    const load = async () => {
       try {
         setError(null);
         setLoading(true);
-        const request = await mockGetProducts();
+        const request = await getProducts();
         setProducts(request);
       } catch (error) {
         console.log(error);
@@ -21,7 +21,7 @@ export const useCatalog = () => {
       }
     };
 
-    getProducts();
+    load();
   }, []);
 
   return { loading, products, error };

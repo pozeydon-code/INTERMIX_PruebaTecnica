@@ -1,11 +1,15 @@
 import Header from "../components/Header";
 import ProductCard from "../components/ProductCard";
 import CartSideBar from "../components/CartSideBar";
-import { useCatalog } from "../hooks/useCatalog";
-import { useCart } from "../hooks/useCart";
-import { useDialogContext } from "../context/DialogContext";
+import { CircularProgress } from "@mui/material";
+import ErrorModal from "../components/ErrorModal";
 import ProductModal from "../components/ProductModal";
+// import useCart from "../hooks/useCart";
+import useCart from "@cartHook";
+import { useDialogContext } from "../context/DialogContext";
 import { useState } from "react";
+import { useEffect } from "react";
+import { getProducts } from "../api/catalogService";
 
 const Hero = () => {
   return (
@@ -21,21 +25,21 @@ const Hero = () => {
 };
 
 const Home = () => {
+  const [products, setProducts] = useState([]);
   const [selectedProduct, setSelectedProduct] = useState(null);
-  const { products, loading, error } = useCatalog();
   const { setIsModalOpen } = useDialogContext();
   const {
     cart,
+    loading,
+    error,
     addToCart,
     removeFromCart,
     decreaseQuantity,
     increaseQuantity,
     getItemQuantity,
     clearCart,
+    createOrder,
   } = useCart();
-
-  if (loading) return <div>Loading</div>;
-  if (error) return <div>Error: {JSON.stringify(error)}</div>;
 
   const handleProductClick = (product) => {
     setIsModalOpen(true);
@@ -46,6 +50,13 @@ const Home = () => {
     setIsModalOpen(false);
     setSelectedProduct(null);
   };
+
+  useEffect(() => {
+    (async () => setProducts(await getProducts()))();
+    console.log(products);
+  }, []);
+
+  if (loading) return <CircularProgress />;
 
   return (
     <div className="min-h-screen bg-background">
@@ -80,11 +91,12 @@ const Home = () => {
       </section>
 
       <CartSideBar
-        products={cart}
+        products={cart?.items}
         clearCart={clearCart}
         removeFromCart={removeFromCart}
         decreaseQuantity={decreaseQuantity}
         increaseQuantity={increaseQuantity}
+        createOrder={createOrder}
       />
 
       <ProductModal
@@ -93,6 +105,8 @@ const Home = () => {
         addItem={addToCart}
         closeModal={handleCloseModal}
       />
+
+      <ErrorModal isOpen={error} onClose={true} error={error} />
     </div>
   );
 };
