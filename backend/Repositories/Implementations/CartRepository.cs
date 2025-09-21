@@ -6,7 +6,7 @@ namespace backend.Repositories.Implementations;
 
 public class CartRepository : ICartRepository
 {
-    private readonly ConcurrentDictionary<int, Cart> _db = new();
+    private readonly ConcurrentDictionary<Guid, Cart> _db = new();
 
     public Task<Cart> CreateAsync(CancellationToken ct = default)
     {
@@ -15,7 +15,7 @@ public class CartRepository : ICartRepository
         return Task.FromResult(c);
     }
 
-    public Task<Cart?> GetAsync(int id, CancellationToken ct = default)
+    public Task<Cart?> GetAsync(Guid id, CancellationToken ct = default)
         => Task.FromResult(_db.TryGetValue(id, out Cart? cart) ? cart : null);
 
     public Task SaveAsync(Cart cart, CancellationToken ct = default)

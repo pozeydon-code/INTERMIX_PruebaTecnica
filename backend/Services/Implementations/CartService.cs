@@ -16,17 +16,17 @@ public class CartService : ICartService
         _catalog = catalog;
     }
 
-    public Task<int> CreateCartAsync(CancellationToken ct) => _carts.CreateAsync(ct).ContinueWith(t => t.Result.Id, ct);
+    public Task<Guid> CreateCartAsync(CancellationToken ct) => _carts.CreateAsync(ct).ContinueWith(t => t.Result.Id, ct);
 
-    public async Task<CartDto?> GetCartAsync(int id, CancellationToken ct)
+    public async Task<CartDto?> GetCartAsync(Guid id, CancellationToken ct)
     {
         Cart? cart = await _carts.GetAsync(id, ct);
         if (cart is null) return null;
         var items = cart.Items.Select(i => new CartItemDto(i.ProductId, i.Name, i.Price, i.Quantity));
-        return new CartDto(cart.Id, items, cart.Subtotal, cart.Tax, cart.Total);
+        return new CartDto(cart.Id, items, cart.Total);
     }
 
-    public async Task AddItemAsync(int cartId, int productId, int quantity, CancellationToken ct)
+    public async Task AddItemAsync(Guid cartId, int productId, int quantity, CancellationToken ct)
     {
         Cart cart = await _carts.GetAsync(cartId, ct) ?? throw new KeyNotFoundException("Cart not found");
         var prod = await _catalog.GetByIdAsync(productId, ct) ?? throw new KeyNotFoundException("Product not found");
@@ -35,24 +35,25 @@ public class CartService : ICartService
         await _carts.SaveAsync(cart, ct);
     }
 
-    public async Task UpdateQtyAsync(int cartId, int productId, int quantity, CancellationToken ct)
+    public async Task UpdateQtyAsync(Guid cartId, int productId, int quantity, CancellationToken ct)
     {
         Cart cart = await _carts.GetAsync(cartId, ct) ?? throw new KeyNotFoundException("Cart not found");
         cart.SetQty(productId, quantity);
         await _carts.SaveAsync(cart, ct);
     }
 
-    public async Task RemoveItemAsync(int cartId, int productId, CancellationToken ct)
+    public async Task RemoveItemAsync(Guid cartId, int productId, CancellationToken ct)
     {
         Cart cart = await _carts.GetAsync(cartId, ct) ?? throw new KeyNotFoundException("Cart not found");
         cart.Remove(productId);
         await _carts.SaveAsync(cart, ct);
     }
 
-    public async Task ClearAsync(int cartId, CancellationToken ct)
+    public async Task ClearAsync(Guid cartId, CancellationToken ct)
     {
         Cart cart = await _carts.GetAsync(cartId, ct) ?? throw new KeyNotFoundException("Cart not found");
         cart.Clear();
         await _carts.SaveAsync(cart, ct);
     }
+
 }

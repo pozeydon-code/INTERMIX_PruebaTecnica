@@ -4,12 +4,10 @@ public class Cart
 {
     private int MAX_ITEMS = 5;
 
-    public int Id { get; set; }
+    public Guid Id { get; set; } = Guid.NewGuid();
     public List<CartItem> Items { get; set; } = new();
 
-    public decimal Subtotal => Items.Sum(i => i.Price * i.Quantity);
-    public decimal Tax => Subtotal * 0.12m;
-    public decimal Total => Subtotal + Tax;
+    public decimal Total => Items.Sum(i => i.Price * i.Quantity);
 
     public void Add(Product product, int quantity)
     {
