@@ -8,12 +8,12 @@
   --primary-foreground: #f8f4ed;
   --secondary: #e9e4d9;
   --secondary-foreground: #0f0a03;
-  --muted: #eeeae3;
-  --muted-foreground: #59544c;
-  --accent: #bb7b76;
-  --accent-foreground: #f8f4ed;
-  --destructive: #e7000a;
-  --destructive-foreground: #f8f4ed;
+  --neutral: #eeeae3;
+  --neutral-foreground: #59544c;
+  --action: #bb7b76;
+  --action-foreground: #f8f4ed;
+  --danger: #e7000a;
+  --danger-foreground: #f8f4ed;
   --border: #dad7d0;
   --ring: #59544c;
 }
@@ -27,12 +27,12 @@
   --color-primary-foreground: var(--primary-foreground);
   --color-secondary: var(--secondary);
   --color-secondary-foreground: var(--secondary-foreground);
-  --color-muted: var(--muted);
-  --color-muted-foreground: var(--muted-foreground);
-  --color-accent: var(--accent);
-  --color-accent-foreground: var(--accent-foreground);
-  --color-destructive: var(--destructive);
-  --color-destructive-foreground: var(--destructive-foreground);
+  --color-neutral: var(--neutral);
+  --color-neutral-foreground: var(--neutral-foreground);
+  --color-action: var(--action);
+  --color-action-foreground: var(--action-foreground);
+  --color-danger: var(--danger);
+  --color-danger-foreground: var(--danger-foreground);
   --color-border: var(--border);
   --color-ring: var(--ring);
 }
